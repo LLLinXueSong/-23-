@@ -1,0 +1,54 @@
+原设计
+开发人员调用类库
+class Library{
+public:
+  void step1()
+  void step3()
+  void step5()
+}
+应用端
+class application{
+public:
+  void step2()
+  void step4()
+  void run() //业务流程方法
+}
+void run（）{
+  step1()
+  if(step2()){
+    step3()
+  }
+  for(i<5){
+    step4()
+  }
+  step5()
+}
+整个流程由应用程序开发人员管理
+
+模板设计
+将流程的不变部分提取出来
+class Library{
+  void step1()
+  void step3()
+  void step5()
+  virtual void step2()
+  virtual void step4()
+  void run(){
+    step1()
+    if(step2())
+      step3()
+    for(i<5)
+      step4()
+    step5()
+  }
+}
+class Application:public Library{
+  void step2(){
+  ...
+  }
+  void step4(){
+  ...
+  }
+  Library *lib = new Application()
+  lib.run()
+}
