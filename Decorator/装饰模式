@@ -1,0 +1,188 @@
+可能会过度的使用继承来扩展对象功能，由于继承为类型引入的静态特质（不能变化的东西）
+如FileStream::Read(number);  NetworkStream::Read(number)  改为基类指针调用
+，使得扩展方式缺乏灵活性，随着子类增多，各种功能组合会导致子类膨胀
+业务操作
+class Stream{
+  public:
+      virtual char Read(int number)=0;
+      virtual void Seek(int position)=0;
+      virtual void Write(char data)=0;
+      virtual ~Stream(){}
+};
+主体类
+class FileStream:public Stream{
+public:
+    virtual char Read(int number){
+    }
+    virtual void Seek(int position){
+    }
+    virtual void Write(char data){
+    }
+};
+class NetworkStream:public Stream{
+public:
+    virtual char Read(int number){
+    }
+    virtual void Seek(int position){
+    }
+    virtual void Write(char data){
+    }
+};
+class MemoryStream:public Stream{
+public:
+    virtual char Read(int number){
+    }
+    virtual void Seek(int position){
+    }
+    virtual void Write(char data){
+    }
+};
+//扩展操作（后加的） 所有的类中对数据加密操作都是一样的
+class CryptoFileStream:public FileSream{
+public:
+    virtual char Read(int number){
+    额外加密操作
+    FileStream::Read(number);
+    }
+    virtual void Seek(position){
+    额外加密操作
+    FileStream::Seek(position);
+    额外加密操作
+    }
+    virtual void Write(byte data){
+    额外加密操作
+    FileStream::Write(data);
+    额外加密操作
+    }
+};
+class CryptoNetworkStream:public FileSream{
+public:
+    virtual char Read(int number){
+    额外加密操作
+    FileStream::Read(number);
+    }
+    virtual void Seek(position){
+    额外加密操作
+    FileStream::Seek(position);
+    额外加密操作
+    }
+    virtual void Write(byte data){
+    额外加密操作
+    FileStream::Write(data);
+    额外加密操作
+    }
+};
+
+
+
+
+**********装饰模式************  把继承换成组合
+
+业务操作
+class Stream{
+  public:
+      virtual char Read(int number)=0;
+      virtual void Seek(int position)=0;
+      virtual void Write(char data)=0;
+      virtual ~Stream(){}
+};
+主体类
+class FileStream:public Stream{
+public:
+    virtual char Read(int number){
+    }
+    virtual void Seek(int position){
+    }
+    virtual void Write(char data){
+    }
+};
+class NetworkStream:public Stream{
+public:
+    virtual char Read(int number){
+    }
+    virtual void Seek(int position){
+    }
+    virtual void Write(char data){
+    }
+};
+class MemoryStream:public Stream{
+public:
+    virtual char Read(int number){
+    }
+    virtual void Seek(int position){
+    }
+    virtual void Write(char data){
+    }
+};
+//继承是为了 操作的接口规范
+class CryptoStream:public Stream{
+    Stream* stream;
+public:
+    virtual char Read(int number){
+    额外加密操作
+    stream->Read(number);
+    }
+    virtual void Seek(position){
+    额外加密操作
+    stream->Seek(position);
+    额外加密操作
+    }
+    virtual void Write(byte data){
+    额外加密操作
+    stream->Write(data);
+    额外加密操作
+    }
+};
+
+class BufferStream:public Stream{
+    Stream* stream;
+public:
+    virtual char Read(int number){
+    额外缓存操作
+    FileStream::Read(number);
+    }
+    virtual void Seek(position){
+    额外缓存操作
+    FileStream::Seek(position);
+    额外缓存操作
+    }
+    virtual void Write(byte data){
+    额外缓存操作
+    FileStream::Write(data);
+    额外缓存操作
+    }
+};
+
+
+
+
+
+
+版本3
+提取公共变量Stream 单独封装一个类
+class DecoratorStream:public Stream{          继承stream是为了接口的规范
+protected:
+    Stream* stream;
+    DecoratorStream(Stream* s):stream(s){}
+}
+
+class CryptoStream:public DecoratorStream{
+public:
+    CryptoStream(Stream* s):DecoratorStream(s){
+
+    }
+    virtual char Read(int number){
+    额外加密操作
+    stream->Read(number);
+    }
+    virtual void Seek(position){
+    额外加密操作
+    stream->Seek(position);
+    额外加密操作
+    }
+    virtual void Write(byte data){
+    额外加密操作
+    stream->Write(data);
+    额外加密操作
+    }
+};
