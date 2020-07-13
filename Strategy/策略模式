@@ -1,0 +1,58 @@
+//某些对象使用的算法可能多种多样，经常改变，如果将这些算法都编码到对象中，将会使对象变得复杂
+enum TaxBase{
+    CN_Tax,
+    US_Tax,
+    DE_Tax
+};
+class SalesOrder{
+    TaxBase tax;
+public:
+    double CalculateTax(){
+        if(tax == CN_Tax){
+
+        }else if(tax == US_Tax){
+
+        }else if(tax == DE_Tax){
+
+        }
+    }
+};
+
+
+
+class TaxStrategy{
+public:
+    virtual double Calulate(const Context& context)=0;
+    virtual ~TaxStrategy(){}
+};
+class CNTax:public TaxStrategy{
+    virtual double Calculate(const Context& context){
+
+    }
+};
+class USTax:public TaxStrategy{
+public:
+    virtual double Calculate(const Context& context){
+
+    }
+};
+class DETax:public TaxStrategy{
+public:
+    virtual double Calculate(const Context& context){
+
+    }
+};
+
+class SalesOrder{
+private:
+    TaxStrategy* strategy;
+public:
+    SalesOrder(strategy* startegyFactory){
+        this->strategy = startegyFactory->NewStrategy()
+    }
+    ~SalesOrder(){delete this->strategy}
+    public double CalculateTax(){
+        Context context();
+        double val = strategy->Calulate(context);
+    }
+};
