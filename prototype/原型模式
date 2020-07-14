@@ -1,0 +1,38 @@
+抽象类                 原型设计模式  有某些结构复杂的对象创建工作，由于需求变化，这些对象经常面临着剧烈的变化，
+class ISplitter{        但他们拥有一些稳定的接口，隔离出易变对象，从而使依赖这些易变对象的
+                            客户程序不随着需求改变而改变
+public:                     根据传进对象类型进行多态的创建不同对象
+    virtual void split()=0;
+    virtual ISplitter* clone()=0;
+    virtual ~ISplitter(){}
+}
+具体类
+class BinarySplitter:public ISplitter{
+public:
+    virtual ISplitter* clone(){   通过克隆来创建自己对象
+        return new BinarySplitter(*this)
+    }
+};
+class TextSplitter:public ISplitter{
+public:
+    virtual ISplitter* clone(){
+        return new TextSplitter(*this)
+    }
+};
+class PictureSplitter:public ISplitter{
+public:
+    virtual ISplitter* clone(){
+        return new PictureSplitter(*this)
+    }
+};
+
+class MainForm{
+    ISplitter* prototype;
+    MainForm(ISplitter* prototype){
+        this->prototype = prototype;
+    }
+    void Button_clicked(){
+        ISplitter* splitter = prototype->clone();
+        splitter->split();
+    }
+};
