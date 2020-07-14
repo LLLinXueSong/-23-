@@ -1,0 +1,184 @@
+桥模式
+由于某些类型的固有实现逻辑，使得他们具有两个变化维度
+class Messager{
+public:
+    virtual void Login(string username,string password)=0;
+    virtual void SendMessage(string message)=0;
+    virtual void SendPicture(Image image)=0;
+
+    virtual void PlaySound()=0;
+    virtual void DrawShape()=0;
+    virtual void WriteText()=0;
+    virtual void Connect()=0;
+    virtual ~Messager(){}
+};
+
+平台实现  pc
+class PCMessagerBase:public Messager{
+public:
+    virtual void PlaySound(){
+    }
+    virtual void DrawShape(){
+    }
+    virtual void WriteText(){
+    }
+    virtual void Connect(){
+    }
+};
+移动平台
+class MobileMessagerBase:public Messager{
+public:
+    virtual void PlaySound(){
+    }
+    virtual void DrawShape(){
+    }
+    virtual void WriteText(){
+    }
+    virtual void Connect(){
+    }
+};
+
+业务抽象 软件不同版本精简版
+class PCMessagerLite:public PCMessagerBase{
+public:
+    virtual void Login(string username,string password){
+        PCMessagerBase::Connect();
+    }
+    virtual void SendMessage(string messages){
+        PCMessagerBase::WriteText();
+    }
+    virtual void SendPicture(Image image){
+        PCMessagerBase::DrawShape();
+    }
+};
+class MobileMessagerLite:public MobileMessagerBase{
+public:
+    virtual void Login(string username,string password){
+        MobileMessagerBase::Connect();
+    }
+    virtual void SendMessage(string messages){
+        MobileMessagerBase::WriteText();
+    }
+    virtual void SendPicture(Image image){
+        MobileMessagerBase::DrawShape();
+    }
+};
+
+完美版
+class PCMessagerPerfect:public PCMessagerBase{
+public:
+    virtual void Login(string username,string password){
+        PCMessagerBase::PlaySound()
+        PCMessagerBase::Connect();
+    }
+    virtual void SendMessage(string messages){
+        PCMessagerBase::PlaySound()
+        PCMessagerBase::WriteText();
+    }
+    virtual void SendPicture(Image image){
+        PCMessagerBase::PlaySound()
+        PCMessagerBase::DrawShape();
+    }
+};
+class MobileMessagerPerfect:public MobileMessagerBase{
+public:
+    virtual void Login(string username,string password){
+        MobileMessagerPerfect::PlaySound()
+        MobileMessagerPerfect::Connect();
+    }
+    virtual void SendMessage(string messages){
+        MobileMessagerPerfect::PlaySound()
+        MobileMessagerPerfect::WriteText();
+    }
+    virtual void SendPicture(Image image){
+        MobileMessagerPerfect::PlaySound()
+        MobileMessagerPerfect::DrawShape();
+    }
+};
+void Process(){
+    Messager *m = new MobileMessagerPerfect(); 编译时装配
+}
+
+
+
+
+
+class Messager{                接口有两个变化方向，一个平台实现，一个业务抽象 所以分成两个
+protected:
+    MessagerImp *messagesImp;
+public:
+    virtual void Login(string username,string password)=0;
+    virtual void SendMessage(string message)=0;
+    virtual void SendPicture(Image image)=0;
+    virtual ~Messager(){}
+};
+class MessagerImp{
+public:
+    virtual void PlaySound()=0;
+    virtual void DrawShape()=0;
+    virtual void WriteText()=0;
+    virtual void Connect()=0;
+    ~MessagerImp(){}
+};
+平台实现  pc
+class PCMessagerImp:public MessagerImp{
+public:
+    virtual void PlaySound(){
+    }
+    virtual void DrawShape(){
+    }
+    virtual void WriteText(){
+    }
+    virtual void Connect(){
+    }
+};
+移动平台
+class MobileMessagerImp:public MessagerImp{
+public:
+    virtual void PlaySound(){
+    }
+    virtual void DrawShape(){
+    }
+    virtual void WriteText(){
+    }
+    virtual void Connect(){
+    }
+};
+
+业务抽象 软件不同版本精简版
+class MessagerLite:public Messager{
+    MessagerImp* messagerImp;
+public:
+    virtual void Login(string username,string password){
+        messagerImp->Connect();
+    }
+    virtual void SendMessage(string messages){
+        messagerImp->WriteText();
+    }
+    virtual void SendPicture(Image image){
+        messagerImp->DrawShape();
+    }
+};
+完美版
+class MessagerPerfect:public Messager{
+    MessagerImp* messagerImp;
+public:
+    virtual void Login(string username,string password){
+        messagerImp->PlaySound()
+        messagerImp->Connect();
+    }
+    virtual void SendMessage(string messages){
+        messagerImp->PlaySound()
+        messagerImp->WriteText();
+    }
+    virtual void SendPicture(Image image){
+        messagerImp->PlaySound()
+        messagerImp->DrawShape();
+    }
+};
+
+void Process(){ 运行时装配
+    MessagerImp *mImp = new PCMessagerImp();
+    Messager *m = new MessagerPerfect(mImp)
+}
+
