@@ -1,0 +1,104 @@
+有时面临一个复杂对象的创建工作，通常各个部分的子对象由一定算法构成，由于需求变化，这个复杂对象各个部分面临
+剧烈变化，但是他们组合在一起的算法相对稳定 (和模板模式类似)
+class House{
+public:
+    void Init(){
+        this->BuildPart1();  构造函数里虚函数不会调用子类，所以不能放到构造函数
+        for(int i=0;i<4;i++){
+            this->BuildPart2();
+        }
+        bool flag = this->BuildPart3();
+        if(flag){
+            this->BuidPart4();
+        }
+        this->BuildPart5();
+    }
+    virtual ~House(){}
+protected:
+    virtual void BuildPart1()=0;
+    virtual void BuildPart2()=0;
+    virtual void BuildPart3()=0;
+    virtual void BuildPart4()=0;
+    virtual void BuildPart5()=0;
+};
+
+class StoneHouse:public House{
+protected:
+    virtual void BuildPart1(){
+    }
+    virtual void BuildPart2(){
+    }
+    virtual void BuildPart3(){
+    }
+    virtual void BuildPart4(){
+    }
+    virtual void BuildPart5(){
+    }
+};
+
+int main(){
+    House* pHouse = new StoneHouse();
+    pHouse->Init();
+}
+
+
+
+上边已经是构建器
+可以继续优化
+
+class House{  抽象基类
+
+};
+class HouseBuilder{  抽象基类 不能创建对象
+public:
+    House* GetResult(){
+        return pHouse;
+    }
+    virtual ~HouseBuilder(){}
+protected:
+    House* pHouse;
+    virtual void BuildPart1()=0;
+    virtual void BuildPart2()=0;
+    virtual void BuildPart3()=0;
+    virtual void BuildPart4()=0;
+    virtual void BuildPart5()=0;
+};
+class StoneHouse:public House{
+};
+class StoneHouseBuilder:public HouseBuilder{        负责构建方法
+    StoneHouseBuilder(House* house):pHouse(house){}
+protected:
+    virtual void BuildPart1(){
+    }
+    virtual void BuildPart2(){
+    }
+    virtual void BuildPart3(){
+    }
+    virtual void BuildPart4(){
+    }
+    virtual void BuildPart5(){
+    }
+};
+class HouseDirector{              负责流程，不需要改变
+    HouseBuilder* housebuid;
+    HouseDirector(HouseBuilder* pHouseBuilder){
+        this->housebuid = pHouseBuilder;
+    }
+    House* Construct(){
+        housebuid->BuildPart1();
+        for(int i=0;i<4;i++){
+            housebuid->BuildPart2();
+        }
+        bool flag = housebuid->BuildPart3();
+        if(flag){
+            housebuid->BuidPart4();
+        }
+        housebuid->BuildPart5();
+        return housebuid->GetResult();
+    }
+};
+int main(){
+    House* house = new StoneHouse()
+    HouseBuilder* stone = new StoneHouseBuilder(house);
+    HouseDirector hd = new HouseDirector(stone);
+}
