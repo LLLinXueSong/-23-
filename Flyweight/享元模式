@@ -1,0 +1,33 @@
+Flyweight
+在软件系统中采用纯粹对象方案的问题在于大量细粒度的对象会很快充斥系统，带来很高的运行时代价
+运用共享技术支持大量细粒度对象
+class Font{
+private:
+    //unique object key
+    string key;
+    //object state
+public:
+    Font(const string& key){
+
+    }
+
+};
+class FontFactory{
+private:
+    map<string,Font*> fontPool;
+public:
+    Font* GetFont(const string& key){     有对象的话返回，没有的话创建对象加入对象池
+        map<string,Font*>::iterator item = fontPool.find(key);
+        if(item!=fontPool.end()){
+            return fontPool[key];
+        }
+        else{
+            Font* font = new Font(key);
+            fontPool[key] = font;
+            return font;
+        }
+    }
+    void clear(){
+
+    }
+};
