@@ -1,0 +1,54 @@
+Proxy
+有些对象由于某种原因，比如对象创建的开销很大，或者某些操作需要安全控制，或者需要进程外访问等。
+直接访问会给使用者或者系统带来很多麻烦
+
+class ISubject{
+public:
+    virtual void process();
+};
+
+class ReadSubject:public ISubject{
+public:
+    virtual void process(){
+
+    }
+};
+
+class ClientApp{
+    ISubject* subject;
+public:
+    ClientApp(){
+        subject = new ReadSubject();   //可能拿不到创建的对象
+    }
+    void DoTask(){
+        subject->process();
+    }
+};
+
+
+
+
+class ISubject{
+public:
+    virtual void process();
+};
+
+class SubjectProxy:public ISubject{
+public:
+    virtual void process(){
+
+        对realsubject的一种间接访问
+
+    }
+};
+
+class ClientApp{
+    ISubject* subject;
+public:
+    ClientApp(){
+        subject = new SubjectProxy();
+    }
+    void DoTask(){
+        subject->process();
+    }
+};
