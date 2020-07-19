@@ -1,0 +1,32 @@
+Memento
+某些对象在状态转换过程中，可能由于某种需求，要求程序能够回溯到对象之前处于某个点时的状态，
+如果使用公有接口来让其他对象得到对象的状态，便会暴露对象的实现细节。
+class Memento{
+    string state;
+public:
+    Memento(const string &s):state(s){}
+    string getState() const{ return state}
+    void setState(const string &s){state = s;}
+};
+class Originator
+{
+    string state;
+public:
+    Originator(){}
+    Memento createMomento(){
+        Memento m(state);         保存状态
+        return m;
+    }
+    void setMomento(const Memento &m){
+        state = m.getState();
+    }
+};
+int main(){
+    Originator originator;
+    存到备忘录
+    Memento mem = originator.creatMomento();
+    改变originator状态
+    
+    从备忘录回复
+    originator.setMomento(memento);
+}
