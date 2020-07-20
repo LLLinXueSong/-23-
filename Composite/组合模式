@@ -1,0 +1,64 @@
+composite
+客户代码过多的依赖对象容器复杂的内部实现结构，对象容器内部实现结构的变化将引起客户代码的频繁变化，
+带来了代码的维护性、扩展性弊端
+
+class Component{
+public:
+    virtual void process()=0;
+    virtual ~Component(){}
+};
+树节点
+class Composite:public Component{
+    string name;
+    list<Component*> elements;
+public:
+    Composite(const string &s):name(s){}
+    void add(Component* element){
+        elements.push_back(element);
+    }
+    void remove(Component* element){
+        elements.remove(element);
+    }
+    void process(){
+        1.处理当前节点
+        。。。。。。。
+        2.处理叶节点
+        ##################################      树节点和叶节点统一处理，不加的话需要在Invok判断是节点还是叶子
+        for(auto &e:elements){
+            e->process();   多态调用
+        }
+        #####################################
+    }
+};
+叶节点
+class Leaf:public Component{
+    string name;
+public:
+    Leaf(string s):name(s){}
+    void process(){
+
+    }
+};
+
+void Invoke(Component &c){
+    c.process();
+}
+int main(){
+    Composite root("root");
+    Composite treeNode1("treeNode1");
+    Composite treeNode2("treeNode2");
+    Composite treeNode3("treeNode3");
+    Composite treeNode4("treeNode4");
+    Leaf leaf1("left1");
+    Leaf leaf2("left2");
+
+    root.add(&treeNode1);
+    treeNode1.add(&treeNode2);
+    treeNode2.add(&leaf1);
+    root.add(&treeNode3);
+    treeNode3.add(&treeNode4);
+    treeNode4.add(&leaf2);
+
+    Invoke(root);     Invoke不需要关心是叶子还是树节点
+
+}
