@@ -1,0 +1,45 @@
+iterator
+几何对象内部结构常常变化各异，但对于这些集合对象，希望可以在不暴露内部结构的同时，让外部代码
+透明的访问其包含的元素
+
+template<typename T>
+class iterator
+{
+
+public:
+    virtual void first()=0;
+    virtual void next()=0;
+    virtual bool isDone() const = 0;
+    virtual T& current()=0;
+};
+template<typename T>
+class MyCollection{
+public:
+    iterator<T> GetIterator(){
+
+    }
+};
+template<typename T>
+class CollectionIterator:public iterator<T>{
+    MyCollection<T> mc;
+public:
+    CollectionIterator(const MyCollection<T> &c):mc(c){}
+    void first() override{
+
+    }
+    void next() override{
+
+    }
+    bool isDone() override{
+
+    }
+};
+void MyAlgorithm()
+{
+
+    MyCollection<int> mc;
+    iterator<int> iter = mc.GetIterator();
+    for(iter.first();!iter.isDone();iter.next()){   使用虚函数性能消耗大，stl采用泛型迭代器，静态多态
+        cout<<iter.current();
+    }
+}
