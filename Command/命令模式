@@ -1,0 +1,51 @@
+Command
+行为请求者和行为实现者通常呈现一种紧耦合，但在某些场合，比如需要对行为进行“记录，撤销，事务”
+等处理，这种无法抵御变化的紧耦合不合适
+讲一个请求封装为一个对象，从而使你可用不同的请求对客户进行参数化；队请求排队或记录请求日志，以及支持可撤销的操作。
+class Command
+{
+public:
+    virtual void execute()=0;
+};
+class ConcreteCommand1:public Command
+{
+    string arg;
+public:
+
+    ConcreteCommand1(const string &a):arg(a){}
+    void execute() override
+    {
+        cout<<"1"<<arg<<endl;
+    }
+};
+class ConcreteCommand2:public Command
+{
+    string arg;
+public:
+
+    ConcreteCommand2(const string &a):arg(a){}
+    void execute() override
+    {
+        cout<<"2"<<arg<<endl;
+    }
+};
+class MacroCommand:public Command
+{
+    vector<Command*> commands;
+public:
+    void addCommand(Command *c){commands.push_back(c);}
+    void execute() override
+    {
+        for(auto &c:commands){
+            c->execute();
+        }
+    }
+};
+int main(){
+    ConcreteCommand1 command1(receiver,"arg 222");
+    ConcreteCommand2 command2(receiver, "arg 323");
+    MacroCommand macro;
+    macro.addCommand(&command1);
+    macro.addCommand(&command2);
+    macro.execute();
+}
