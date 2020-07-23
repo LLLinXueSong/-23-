@@ -1,0 +1,92 @@
+interpretor 解析器
+某一特定领域问题比较复杂，类似结构不断重复出现
+使用普通的编程方式来实现将面临非常频繁的变化 通常将特定问题表达为某种语法下句子
+然后构建一个解释起来解释这样的句子
+
+class Expression{
+public:
+    virtual int interpreter(map<char, int> var) = 0;
+    virtual ~Expression(){}
+};
+变量表达式
+class VarExpression:public Expression{
+    char key;
+public:
+    VarExpression(const char& key)
+    {
+        this->key = key;
+    }
+    int interpreter(map<char,int> var) override
+    {
+        return var[key];
+    }
+};
+符号表达式
+class SysbolExpression:public Expression {
+protected:
+    Expression *left;
+    Expression *right;
+public:
+    SysbolExpression(Expression *left,Expression *right):left(left),right(right){
+
+    }
+};
+class AddExpression:public SymbolExpression{
+public:
+    AddExpression(Expression *left,Expression *right):SysbolExpression(left,right){
+
+    }
+    int interpreter(map<char,int> var){
+        return left->interpreper(var)+right->interpreter(var);
+    }
+};
+class SubExpression:public SymbolExpression{
+public:
+    SubExpression(Expression *left,Expression *right):SysbolExpression(left,right){
+
+    }
+    int interpreter(map<char,int> var){
+        return left->interpreper(var)-right->interpreter(var);
+    }
+};
+
+Expression* analyse(string expStr){
+    stack<Expression*> expStack;
+    Expression* left = nullptr;
+    Expression* right = nullptr;
+    for(int i=0;i<expStr.size();i++)
+    {
+        switch(expStr[i])
+        {
+        case '+':
+            left = expStack.top();
+            right = new VarExpression(expStr[++i]);
+            expStack.push(new AddExpression(left,right));
+            break;
+        case '-':
+            left = expStack.top();
+            right = new VarExpression(expStr[++i]);
+            expStack.push(new SubExpression(left,right));
+            break;
+        default:
+            expStack.push(new VarExpression(expStr[i]));
+        }
+    }
+    Expression *expression = expStack.top();
+    return expression;
+}
+void release(Expression *expression){
+
+}
+int main(int argc,const char * argv[]){
+    string expStr = "a+b-c+d";
+    map<char, int> var;
+    var.insert(make_pair('a',5));
+    var.insert(make_pair('b',2));
+    var.insert(make_pair('c',1));
+    var.insert(make_pair('d',6));
+    Expression *expression = analyse(expStr);
+    int result = expression->interpreter(var);
+    cout<<result<<endl;
+    release(expression);
+}
