@@ -1,0 +1,86 @@
+chain of resposibility 职责链
+一个请求可能被多个对象处理，但是每个请求在运行时只能有一个接受者，如果显示指定
+如果显示指定将带来发送者与接受者紧耦合
+enum class RequesType
+{
+    REQ_HANDLER1,
+    REQ_HANDLER2,
+    REQ_HANDLER3
+};
+class Reqest
+{
+    string description;
+    RequesType reqType;
+public:
+    Reqest(const string& desc,RequestType type):description(desc),reqType(reqType){}
+    RequesType getReqType() const {return reqType;}
+    const string& getDescription() const{
+        return description;
+    }
+};
+class ChainHandler{
+    ChainHandler *nextChain;
+    void sendReqestToNextHandler(const Reqest &req){
+        if(nextChain != nullptr)
+            nextChain->handle(req);
+    }
+protected:
+    virtual bool canHandleRequest(const Reqest &req)=0;
+    virtual void processRequest(const Reqest &req)=0;
+public:
+    ChainHandler(){nextChain = nullptr;}
+    void setNextChain(ChainHandler *next){ nextChain = next;}
+    void handle(const Reqest &req){
+        if(canHandleRequest(req))               当前处理不了交给下一个
+            processRequest(req);
+        else
+            sendReqestToNextHandler(req);
+    }
+};
+class Handler1: public ChainHandler{
+protected:
+    bool canHandleRequest(const Reqest &req)override
+    {
+        return req.getReqType() == RequesType::REQ_HANDLER1;
+    }
+    void processRequest(const Reqest &req) override
+    {
+
+        cout<<req.getDescription()<<endl;
+    }
+};
+class Handler2: public ChainHandler{
+protected:
+    bool canHandleRequest(const Reqest &req)override
+    {
+        return req.getReqType() == RequesType::REQ_HANDLER2;
+    }
+    void processRequest(const Reqest &req) override
+    {
+
+        cout<<req.getDescription()<<endl;
+    }
+};
+class Handler3: public ChainHandler{
+protected:
+    bool canHandleRequest(const Reqest &req)override
+    {
+        return req.getReqType() == RequesType::REQ_HANDLER3;
+    }
+    void processRequest(const Reqest &req) override
+    {
+
+        cout<<req.getDescription()<<endl;
+    }
+};
+int main(){
+    Handler1 h1;
+    Handler2 h2;
+    Handler3 h3;
+    h1.setNextChain(&h2);
+    h2.setNextChain(&h3)
+
+    Reqest req();
+    h1.handle(req);
+    return 0;
+}
