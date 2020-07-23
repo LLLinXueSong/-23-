@@ -1,0 +1,91 @@
+Visitor访问器
+由于需求的改变，某些类层次中常常需要增加新的行为，如果直接在基类中更改，将会给子类带来繁重的负担
+class Visitor;
+
+class Element
+{
+
+public:
+    virtual void Func1()=0;         如果增加一个方法，所有的子类都需要增加
+    virtual ~Element(){};
+};
+class ElementA:public Element
+{
+
+public:
+    void Func1() override{
+
+    }
+};
+class ElementB:public Element
+{
+public:
+    void Func1() override
+    {
+
+    }
+};
+
+
+
+class Visitor{
+public:
+    virtual void visitElementA(ElementA &element) = 0;
+    virtual void visitElementB(ElementB &element) = 0;
+    virtual ~Visitor(){}
+};
+class Element
+{
+
+public:
+    virtual void accept(Visitor &visitor) = 0  已经预感到后期需要加东西，创建接口函数
+    virtual ~Element(){};
+};
+class ElementA:public Element
+{
+
+public:
+    void accept(Visitor &visitor) override
+    {
+        visitor.visitElementA(*this);
+    }
+};
+class ElementB:public Element
+{
+public:
+    void accept(Visitor &visitor) override
+    {
+        visitor.visitElementB(*this);
+    }
+};
+
+############################################################################          使用添加新类代替在子类中扩展，缺点：类层次结构不能变
+将来增加
+class Visitor1:public Visitor{      第一种新操作
+public:
+    void visitElementA(ElementA &element) override
+    {
+        cout<<"visitor1 process elementA"<<endl;
+    }
+    void visitElementB(ElementB &element) override
+    {
+        cout<<"visitor1 process elementB"<<endl;
+    }
+};
+class Visitor2:public Visitor{          第二种新操作
+public:
+    void visitElementA(ElementA &element) override
+    {
+        cout<<"visitor2 process elementA"<<endl;
+    }
+    void visitElementB(ElementB &element) override
+    {
+        cout<<"visitor2 process elementB"<<endl;
+    }
+};
+
+int main(){
+    Visitor2 visitor;
+    ElementB element;       给elementB增加操作。
+    element.accept(visitor);
+}
