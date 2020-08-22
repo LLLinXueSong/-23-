@@ -139,16 +139,16 @@ class BufferStream:public Stream{
 public:
     virtual char Read(int number){
     额外缓存操作
-    FileStream::Read(number);
+    stream->Read(number);
     }
     virtual void Seek(position){
     额外缓存操作
-    FileStream::Seek(position);
+    stream->Seek(position);
     额外缓存操作
     }
     virtual void Write(byte data){
     额外缓存操作
-    FileStream::Write(data);
+    stream->Write(data);
     额外缓存操作
     }
 };
